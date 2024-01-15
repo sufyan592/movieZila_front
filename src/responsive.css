@@ -1,0 +1,168 @@
+/* ============================================= Media Queries (1024px) ============================================ */
+
+@media(max-width:1024px) {
+    .section-spacing {
+        max-width: 90%;
+    }
+
+    .movie-signup-wrapper {
+        max-width: auto;
+    }
+
+    .add-new-movie-content {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important;
+        grid-gap: 4rem !important;
+        padding-top: 4rem !important;
+    }
+}
+
+
+
+/* ============================================= Media Queries (767px) ============================================ */
+
+@media(max-width:767px) {
+
+    /* .movie-nav {
+        display: none;
+    } */
+
+    .section-spacing {
+        max-width: 90% !important;
+        padding: 4rem 0 !important;
+    }
+
+    .movies-list-wrapper.section-spacing {
+        padding: 0 !important;
+
+    }
+
+    /* .movie-signup-wrapper {
+        max-width: 380px !important;
+    } */
+
+
+    h1 {
+        font-size: 48px;
+        line-height: 56px;
+    }
+
+    h2 {
+        font-size: 32px;
+        line-height: 40px;
+    }
+
+    h3 {
+        font-size: 28px;
+        line-height: 36px;
+    }
+
+    h4 {
+        font-size: 22px;
+        line-height: 30px;
+    }
+
+    .movies-list-wrapper {
+        display: grid !important;
+        grid-template-columns: repeat(2, 1fr) !important;
+        row-gap: 2.8rem !important;
+        column-gap: 1rem !important;
+
+    }
+
+    .movie-card {
+        padding: 0 0 1rem 0 !important;
+    }
+
+    .movie-card-content {
+        padding: 0.6rem 0.9rem 0 0.9rem !important;
+    }
+
+    .movie-card-content h5 {
+        padding-bottom: 0.5rem !important;
+    }
+
+    .add-new-movie-content {
+        display: grid !important;
+        grid-template-columns: 99% !important;
+        grid-gap: 0.5rem !important;
+        padding-top: 4rem !important;
+        padding-bottom: 6rem !important;
+    }
+
+    .movie-signup-form form input {
+
+        margin: 0.5rem 0 !important;
+    }
+
+    .add-movie-form form input[type='number']:nth-child(2) {
+        width: auto !important;
+    }
+
+    .movie-signup-form.add-movie-form {
+        order: 0;
+    }
+
+    .upload-movie-img {
+        order: 1;
+        height: 370px !important;
+    }
+
+    .movie-not-found-wrapper.section-spacing {
+        padding: 10rem 0 4rem 0 !important;
+    }
+
+    .add-new-movie-content {
+        position: relative;
+    }
+
+    .add-movie-btns {
+        /* padding-top: 1.8rem;
+        display: flex; */
+        position: absolute;
+        bottom: 0px;
+        display: flex !important;
+        justify-content: center;
+        align-items: center;
+        max-width: 100%;
+        width: 100%;
+        gap: 1rem;
+        /* flex-wrap: wrap; */
+    }
+
+
+
+
+
+
+
+}
+
+@media(max-width:450px) {
+
+    .movie-fooetr-wrapper {
+        padding: 3.5rem 0 !important;
+        background-image: url('../public/images/vector-mobile.png') !important;
+        background-position: center center !important;
+        background-size: cover !important;
+        background-repeat: no-repeat !important;
+    }
+
+}
+
+@media(max-width:380px) {
+
+    .add-movie-btns {
+
+        display: grid !important;
+        max-width: 100%;
+        grid-template-columns: 100%;
+        width: 100%;
+        grid-gap: 0rem;
+    }
+
+    .add-new-movie-content {
+        padding-bottom: 10rem !important;
+    }
+
+}

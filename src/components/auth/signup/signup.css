@@ -1,0 +1,60 @@
+.movie-signup-wrapper {
+    text-align: center;
+    max-width: 300px;
+}
+
+.movie-signup-form form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.movie-signup-form form input {
+    background-color: var(--inputs-clr);
+    border: none;
+    /* padding: 0.9rem 1rem 0.8rem 1rem; */
+    padding: 0.9rem 1rem;
+    margin: 0.8rem 0;
+    border-radius: 10px;
+    color: #fff;
+
+}
+
+.movie-signup-form form input::placeholder {
+    font-size: 14px;
+    line-height: 24px;
+    color: #bebcbcd0;
+
+}
+
+.movie-signup-form form input[type='submit'] {
+    background-color: var(--primary-clr);
+    border: 1px solid var(--primary-clr);
+    cursor: pointer;
+}
+
+.movie-signup-form form .btn-primary:hover {
+    background-color: transparent;
+    border: 1px solid var(--text-clr);
+    color: var(--text-clr);
+    transition: 0.5s;
+}
+
+.movie-chkbox {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.5rem;
+    justify-content: center;
+    color: #fff;
+}
+
+.movie-signup-content h1 {
+    padding-bottom: 1.5rem;
+}
+
+input[type='checkbox'] {
+    accent-color: var(--inputs-clr);
+    border-radius: 5px;
+    padding: 0.5rem;
+}

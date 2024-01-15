@@ -1,13 +1,155 @@
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+/* =========================================== Global Styling ====================================== */
+
+:root {
+
+  --primary-clr: #2BD17E;
+  --background-clr: #093545;
+  --inputs-clr: #224957;
+  --cards-clr: #092c39;
+  --text-clr: #fff;
+
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Montserrat', sans-serif;
+
+}
+
+body {
+
+  /* font-family: 'Montserrat', sans-serif; */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--background-clr);
+  position: relative;
+}
+
+
+
+
+/* ====================== Heading Styling ===================== */
+
+h1 {
+  font-size: 64px;
+  line-height: 80px;
+  font-weight: 600;
+  color: var(--text-clr);
+}
+
+h2 {
+  font-size: 48px;
+  line-height: 56px;
+  font-weight: 600;
+  color: var(--text-clr);
+
+}
+
+h3 {
+  font-size: 40px;
+  line-height: 48px;
+  font-weight: 600;
+  color: var(--text-clr);
+}
+
+h4 {
+  font-size: 32px;
+  line-height: 40px;
+  font-weight: 600;
+  color: var(--text-clr);
+}
+
+h5 {
+  font-size: 20px;
+  line-height: 32px;
+  font-weight: 500;
+  color: var(--text-clr);
+
+}
+
+h6 {
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 700;
+  color: var(--text-clr);
+
+}
+
+/* ====================== Heading Styling ===================== */
+
+.section-spacing {
+  max-width: 85%;
+  margin: auto;
+  padding: 5rem 0;
+}
+
+/* ====================== Heading Styling ===================== */
+
+p {
+  font-size: 14px;
+  line-height: 24px;
+  font-weight: 400;
+  color: var(--text-clr);
+
+}
+
+
+
+
+/* ================================ Global Buttons ===================================== */
+
+.btn-primary {
+  background-color: var(--primary-clr);
+  border: 1px solid var(--primary-clr);
+  border-radius: 10px;
+  padding: 0.8rem 3rem;
+  color: var(--text-clr);
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 700;
+}
+
+.btn-primary:hover {
+  background-color: transparent;
+  border: 1px solid var(--text-clr);
+  color: var(--text-clr);
+  transition: 0.5s;
+
+}
+
+.btn-secondary {
+  background-color: transparent;
+  border: 1px solid var(--text-clr);
+  border-radius: 10px;
+  color: var(--text-clr);
+  padding: 0.8rem 3rem;
+  color: var(--text-clr);
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 700;
+}
+
+.btn-secondary:hover {
+  background-color: var(--primary-clr);
+  border: 1px solid var(--primary-clr);
+  color: var(--text-clr);
+  transition: 0.5s;
+}
+
+/* ================================ Anchor Style ===================================== */
+
+a {
+  text-decoration: none;
+  font-size: 16px;
+  color: var(--primary-clr);
+
+}
+
+/* ================================ Anchor Style ===================================== */
+
+img {
+  max-width: 100%;
+  height: auto;
 }

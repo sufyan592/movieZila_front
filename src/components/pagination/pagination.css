@@ -1,0 +1,31 @@
+.pagination-wrapper {
+    display: flex;
+    gap: 0.8rem;
+    justify-content: center;
+    align-items: center;
+}
+
+.pagination-list ul {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.pagination-list ul li {
+    list-style-type: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    margin: 0 0.3rem;
+    color: #fff;
+    cursor: pointer;
+
+}
+
+.pagination .pagination-list ul li.pagination-number {
+    background-color: #092C39;
+}
+
+.pagination .pagination-list ul li.pagination-active {
+    background-color: var(--primary-clr) !important;
+    border-radius: 4px;
+}
