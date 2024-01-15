@@ -10,12 +10,19 @@ import { useParams, useNavigate } from "react-router-dom";
 const EditMovieComp = () => {
   const { movieId } = useParams();
   const navigate = useNavigate();
-  // const loginUser = JSON.parse(localStorage.getItem("loginUser"));
-  const [userValue, setUserValue] = useState({
+
+  const [movieData, setMovieData] = useState({
     img: "",
     title: "",
     publish_year: "",
   });
+
+  const [userValue, setUserValue] = useState({
+    img: "", // Make sure you initialize it to an empty string
+    title: "",
+    publish_year: "",
+  });
+
   const [uploadedImage, setUploadedImage] = useState(null);
 
   useEffect(() => {
@@ -24,7 +31,10 @@ const EditMovieComp = () => {
         const response = await axios.get(
           `http://localhost:8002/api/v1/movie/${movieId}`
         );
-        setUserValue(response.data.data);
+        const fetchedMovieData = response.data;
+
+        setMovieData(fetchedMovieData);
+        setUserValue(fetchedMovieData);
       } catch (error) {
         console.error("Error fetching movie details:", error.message);
       }
@@ -73,7 +83,7 @@ const EditMovieComp = () => {
       setUserValue({
         title: "",
         publish_year: "",
-        img: "",
+        img: "", // Reset img to an empty string after the update
       });
       setUploadedImage(null);
 
@@ -88,15 +98,11 @@ const EditMovieComp = () => {
   };
 
   const handleCancel = () => {
-    setUserValue({
-      title: "",
-      publish_year: "",
-      img: "",
-    });
-    setUploadedImage(null);
-
-    // Display cancellation message using toastify
     toast.info("Update cancelled.");
+
+    setUserValue({ ...movieData });
+    setUploadedImage(null);
+    navigate("/movies");
   };
 
   return (
@@ -110,9 +116,13 @@ const EditMovieComp = () => {
             }`}
           >
             <div className="upload-movie-img" {...getRootProps()}>
-              {uploadedImage ? (
+              {uploadedImage || movieData?.img ? (
                 <img
-                  src={URL.createObjectURL(uploadedImage)}
+                  src={
+                    uploadedImage
+                      ? URL.createObjectURL(uploadedImage)
+                      : `http://localhost:8002/images/${movieData.img}`
+                  }
                   alt="Uploaded Preview"
                 />
               ) : (
@@ -121,7 +131,7 @@ const EditMovieComp = () => {
                     <FiDownload />
                   </div>
                   <div>
-                    <p>Drop an image here or click to upload</p>
+                    <p>Click to upload</p>
                   </div>
                 </>
               )}
@@ -146,12 +156,13 @@ const EditMovieComp = () => {
                 />
 
                 <div className="add-movie-btns">
-                  <input
+                  <button
                     type="button"
-                    value="Cancel"
                     className="btn-secondary"
                     onClick={handleCancel}
-                  />
+                  >
+                    Cancel
+                  </button>
                   <input type="submit" value="Update" className="btn-primary" />
                 </div>
               </form>
