@@ -6,6 +6,7 @@ const initialState = {
     count: 0,
   },
   favoriteMovies: [],
+  allFavirouteMovies: [],
   currentPage: 1,
   isLoading: false,
   error: null,
@@ -47,8 +48,6 @@ const movieReducer = (state = initialState, action) => {
       };
 
     case "EDIT_MOVIE_DATA_SUCCESS":
-      // Assuming the response from the server contains the updated movie data
-      // You might need to update the movies array accordingly based on your API response
       return {
         ...state,
         movies: state.movies.map((movie) =>
@@ -65,6 +64,14 @@ const movieReducer = (state = initialState, action) => {
         isLoading: false,
         error: action.payload,
       };
+
+    case "FAVIROUTE_MOVIE_DATA_SUCCESS":
+      return {
+        ...state,
+        allFavirouteMovies: action.payload,
+        isLoading: false,
+      };
+
     case "TOGGLE_FAVORITE_REQUEST":
       return {
         ...state,

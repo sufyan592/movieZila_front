@@ -1,5 +1,7 @@
 import axios from "axios";
 
+const loginUser = JSON.parse(localStorage.getItem("loginUser")) || null;
+
 // =================================== New Movie ================================
 
 export const addMovie = (data) => {
@@ -25,28 +27,6 @@ export const addMovie = (data) => {
 
 // =================================== All Movies ================================
 
-// export const allMovies = (page = 1, pageSize = 8) => {
-//   return async (dispatch) => {
-//     dispatch({ type: "MOVIE_DATA_REQUEST" });
-//     try {
-//       const response = await axios.get(
-//         `http://localhost:8002/api/v1/movie?page=${page}&pageSize=${pageSize}`
-//       );
-
-//       dispatch({
-//         type: "MOVIE_DATA_SUCCESS",
-//         payload: response.data,
-//       });
-//     } catch (error) {
-//       console.error("Error fetching movie data:", error.message);
-//       dispatch({
-//         type: "MOVIE_DATA_FAILURE",
-//         payload: error.message,
-//       });
-//     }
-//   };
-// };
-
 export const allMovies = (page = 1, pageSize = 8) => {
   return async (dispatch) => {
     dispatch({ type: "MOVIE_DATA_REQUEST" });
@@ -67,6 +47,40 @@ export const allMovies = (page = 1, pageSize = 8) => {
       console.error("Error fetching movie data:", error.message);
       dispatch({
         type: "MOVIE_DATA_FAILURE",
+        payload: error.message,
+      });
+    }
+  };
+};
+
+// =================================== All Fav Movies ================================
+
+export const allFavirouteMovies = (page = 1, pageSize = 8, userId, token) => {
+  return async (dispatch) => {
+    dispatch({ type: "FAVIROUTE_MOVIE_DATA_REQUEST" });
+    try {
+      const response = await axios.get(
+        `http://localhost:8002/api/v1/movie/favMovies/${userId}?page=${page}&pageSize=${pageSize}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      dispatch({
+        type: "FAVIROUTE_MOVIE_DATA_SUCCESS",
+        payload: {
+          data: response.data.data,
+          count: response.data.count,
+          currentPage: page,
+        },
+      });
+    } catch (error) {
+      console.error("Error fetching movie data:", error.message);
+      dispatch({
+        type: "FAVIROUTE_MOVIE_DATA_FAILURE",
         payload: error.message,
       });
     }
@@ -104,42 +118,9 @@ export const editMovie = (id, data, token) => {
     }
   };
 };
-// =================================== Edit Movie ================================
+// =================================== Faviroute toogle ================================
 
-// export const favMovie = (id, data, token) => {
-//   return async (dispatch) => {
-//     dispatch({ type: "FAV_MOVIE_DATA_REQUEST" });
-
-//     try {
-//       const response = await axios.get(
-//         `http://localhost:8002/api/v1/movie/favMovies/${id}`,
-//         {
-//           headers: {
-//             "Content-Type": "application/json",
-//             Authorization: `Bearer ${token}`,
-//           },
-//         }
-//       );
-
-//       dispatch({
-//         type: "FAV_MOVIE_DATA",
-//         payload: response.data,
-//       });
-//     } catch (error) {
-//       console.error("Error updating blog data:", error.message);
-//       dispatch({
-//         type: "FAV_MOVIE_FAILURE",
-//         payload: error.message,
-//       });
-//     }
-//   };
-// };
-
-// src/redux/actions/MovieAction.js
-
-export const toggleFavorite = (userId, movieId) => {
-  console.log("UserID AC:", userId);
-  console.log("UserID AC:", movieId);
+export const toggleFavorite = (userId, movieId, token) => {
   return async (dispatch) => {
     try {
       dispatch({ type: "TOGGLE_FAVORITE_REQUEST" });
@@ -149,6 +130,12 @@ export const toggleFavorite = (userId, movieId) => {
         {
           userId,
           movieId,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
         }
       );
 

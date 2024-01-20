@@ -48,9 +48,17 @@
 }
 
 .favorite-icon {
-
     position: absolute;
     right: 0.8rem;
     top: 0.3rem;
+}
 
+.movie-card-inner-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.pagination .active {
+    background-color: red;
 }

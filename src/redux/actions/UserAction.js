@@ -1,9 +1,11 @@
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
 // ================================ Sign up ============================
 
 export const addUser = (data) => {
+  // const navigate = useNavigate();
   return async (dispatch) => {
     dispatch({ type: "REQUEST_USERS" });
     try {
@@ -11,14 +13,26 @@ export const addUser = (data) => {
         "http://localhost:8002/api/v1/user/signup",
         data
       );
-      console.log("Signup User:", response);
+      if (response.status === 409) {
+        toast.error("Email already Exists.");
+      } else if (response.status != 201) {
+        toast.error(response.message);
+      }
       dispatch({
         type: "ADD_USER",
         payload: data,
       });
+      toast.success("Signup successful!");
+      // navigate("/signin");
     } catch (error) {
-      console.log(error);
       dispatch({ type: "USERS_FAILURE_ERROR" });
+      if (error.response.status === 409) {
+        toast.error("Email already Exists.");
+      } else if (error.response.status === 400) {
+        toast.error("Please Enter all Details.");
+      } else {
+        toast.error("An error occurred during Signup. Please try again.");
+      }
     }
   };
 };
@@ -58,29 +72,6 @@ export const userLogin = (data) => {
 };
 
 // ================================ Get All Users from DataBase ============================
-
-export const allUsers = () => {
-  return async (dispatch) => {
-    dispatch({ type: "REQUEST_USERS" });
-    try {
-      const users = await axios.get("http://localhost:8001/api/v1/user");
-
-      console.log("All Users Data:", users.data.users);
-
-      localStorage.setItem("allLoginUsers", JSON.stringify(users.data.users));
-
-      // const users = await response.json();
-      // console.log("ALL users from DB:", data.data);
-      dispatch({
-        type: "ALL_USERS",
-        payload: users,
-      });
-    } catch (error) {
-      console.log(error);
-      dispatch({ type: "USERS_FAILURE_ERROR" });
-    }
-  };
-};
 
 export const deleteUser = (id) => {
   return async (dispatch) => {
@@ -123,6 +114,32 @@ export const loginUserData = (id, token) => {
         type: "FAILED_TO_GET_All_USERS_LOGIN_DATA",
         payload: error.message,
       });
+    }
+  };
+};
+
+// ================================ Get All Users from DataBase ============================
+
+export const allUsers = () => {
+  return async (dispatch) => {
+    dispatch({ type: "REQUEST_USERS" });
+
+    try {
+      const users = await axios.get("http://localhost:8002/api/v1/user");
+
+      console.log("All Users Data:", users.data.users);
+
+      // localStorage.setItem("allLoginUsers", JSON.stringify(users.data.users));
+
+      // const users = await response.json();
+      // console.log("ALL users from DB:", data.data);
+      dispatch({
+        type: "GET_ALL_USERS",
+        payload: users.data.users,
+      });
+    } catch (error) {
+      console.log(error);
+      dispatch({ type: "USERS_FAILURE_ERROR" });
     }
   };
 };

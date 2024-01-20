@@ -21,26 +21,23 @@ const SigninComp = () => {
     }));
   };
 
-  const submitUserData = async (e) => {
+  const submitUserData = (e) => {
     e.preventDefault();
-    try {
-      await dispatch(
-        userLogin({
-          email: userValue.email,
-          password: userValue.password,
-        })
-      );
-      navigate("/movies");
 
-      // The success message is already handled in the userLogin action
+    dispatch(
+      userLogin({
+        email: userValue.email,
+        password: userValue.password,
+      })
+    );
+    navigate("/movies");
 
-      setUserValue({
-        email: "",
-        password: "",
-      });
-    } catch (error) {
-      // Any additional error handling can be done here
-    }
+    // The success message is already handled in the userLogin action
+
+    // setUserValue({
+    //   email: "",
+    //   password: "",
+    // });
   };
 
   return (

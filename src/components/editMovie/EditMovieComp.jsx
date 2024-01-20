@@ -9,7 +9,9 @@ import { useParams, useNavigate } from "react-router-dom";
 
 const EditMovieComp = () => {
   const { movieId } = useParams();
+  console.log(movieId);
   const navigate = useNavigate();
+  const token = JSON.parse(localStorage.getItem("loginUser")) || null;
 
   const [movieData, setMovieData] = useState({
     img: "",
@@ -18,7 +20,7 @@ const EditMovieComp = () => {
   });
 
   const [userValue, setUserValue] = useState({
-    img: "", // Make sure you initialize it to an empty string
+    img: "",
     title: "",
     publish_year: "",
   });
@@ -31,7 +33,8 @@ const EditMovieComp = () => {
         const response = await axios.get(
           `http://localhost:8002/api/v1/movie/${movieId}`
         );
-        const fetchedMovieData = response.data;
+        console.log("Res:", response);
+        const fetchedMovieData = response.data.data;
 
         setMovieData(fetchedMovieData);
         setUserValue(fetchedMovieData);
@@ -61,11 +64,12 @@ const EditMovieComp = () => {
     accept: "image/*",
   });
 
+  const formData = new FormData();
+
   const submitUserData = async (e) => {
     e.preventDefault();
 
     try {
-      const formData = new FormData();
       formData.append("file", uploadedImage);
 
       // Append other form data
@@ -75,7 +79,13 @@ const EditMovieComp = () => {
 
       const response = await axios.put(
         `http://localhost:8002/api/v1/movie/${movieId}`,
-        formData
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${token.data}`,
+          },
+        }
       );
 
       console.log("Image upload response:", response.data);
@@ -94,12 +104,13 @@ const EditMovieComp = () => {
       navigate("/movies");
     } catch (error) {
       console.error("Error updating movie:", error.message);
+      // Display error message using toastify
+      toast.error("Error updating movie. Please try again.");
     }
   };
 
   const handleCancel = () => {
     toast.info("Update cancelled.");
-
     setUserValue({ ...movieData });
     setUploadedImage(null);
     navigate("/movies");

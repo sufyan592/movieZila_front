@@ -23,27 +23,23 @@ const SignupComp = () => {
     }));
   };
 
-  const submitUserData = async (e) => {
+  const submitUserData = (e) => {
     e.preventDefault();
-    try {
-      await dispatch(
-        addUser({
-          name: userValue.name,
-          email: userValue.email,
-          password: userValue.password,
-        })
-      );
 
-      toast.success("Signup successful!"); // Display success message
-      setUserValue({
-        name: "",
-        email: "",
-        password: "",
-      });
-      navigate("/signin");
-    } catch (error) {
-      toast.error(`Signup failed: ${error.message}`); // Display error message
-    }
+    dispatch(
+      addUser({
+        name: userValue.name,
+        email: userValue.email,
+        password: userValue.password,
+      })
+    );
+
+    // setUserValue({
+    //   name: "",
+    //   email: "",
+    //   password: "",
+    // });
+    // navigate("/signin");
   };
 
   return (

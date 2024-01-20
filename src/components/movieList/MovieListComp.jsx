@@ -7,29 +7,32 @@ import Pagination from "../pagination/Pagination";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { allMovies, toggleFavorite } from "../../redux/actions/MovieAction";
+import { jwtDecode } from "jwt-decode";
+import { MdEdit } from "react-icons/md";
 
 const MovieListComp = () => {
-  // const currentPage = useSelector((state) => state.movieReducer.currentPage);
-
   const [favColors, setFavColors] = useState({});
-  const loginUser = JSON.parse(localStorage.getItem("loginUser"));
+  const token = JSON.parse(localStorage.getItem("loginUser")) || null;
+  const { userId, userPermissions } = token
+    ? jwtDecode(token.data)
+    : { userId: [], userPermissions: [] };
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:8002/api/v1/movie/favMovies/${loginUser.user.id}`,
+          `http://localhost:8002/api/v1/movie/favMovies/${userId}`,
           {
             headers: {
               "Content-Type": "application/json",
-              Authorization: `Bearer ${loginUser.token}`,
+              Authorization: `Bearer ${token.data}`,
             },
           }
         );
 
         setFavColors((prevFavColors) => {
           const newFavColors = { ...prevFavColors };
-          response?.data?.favourites.forEach((movieId) => {
+          response?.data?.data.forEach((movieId) => {
             newFavColors[movieId.movieId] = "pink";
           });
           return newFavColors;
@@ -39,10 +42,10 @@ const MovieListComp = () => {
       }
     };
 
-    if (loginUser) {
+    if (token) {
       fetchData();
     }
-  }, [loginUser]);
+  }, []);
 
   const dispatch = useDispatch();
   const { movies, isLoading, error, currentPage } = useSelector(
@@ -58,9 +61,9 @@ const MovieListComp = () => {
   };
 
   const handleFavoriteClick = async (movieId) => {
-    if (loginUser) {
+    if (token) {
       try {
-        await dispatch(toggleFavorite(loginUser.user.id, movieId));
+        dispatch(toggleFavorite(userId, movieId, token.data));
 
         setFavColors((prevFavColors) => {
           const newFavColors = { ...prevFavColors };
@@ -85,12 +88,10 @@ const MovieListComp = () => {
             <h2>All Movies</h2>
           </div>
           <div className="movie-list-add">
-            {loginUser ? (
-              <>
-                <Link to="/addmovie">
-                  <CiCirclePlus />
-                </Link>
-              </>
+            {userPermissions.some((permission) => permission === "create") ? (
+              <Link to="/addmovie">
+                <CiCirclePlus />
+              </Link>
             ) : null}
           </div>
         </div>
@@ -110,7 +111,7 @@ const MovieListComp = () => {
                     src={`http://localhost:8002/images/${movie.img}`}
                     alt="movie"
                   />
-                  {loginUser ? (
+                  {token ? (
                     <div
                       className="favorite-icon"
                       onClick={() => handleFavoriteClick(movie.id)}
@@ -135,10 +136,16 @@ const MovieListComp = () => {
                 </div>
                 <div className="movie-card-content">
                   <h5>{movie.title}</h5>
-                  <p>{movie.publish_year}</p>
-                  {loginUser ? (
-                    <Link to={`/edit/${movie.id}`}>Edit</Link>
-                  ) : null}
+                  <div className="movie-card-inner-content">
+                    <p>{movie.publish_year}</p>
+                    {userPermissions.some(
+                      (permission) => permission === "edit"
+                    ) ? (
+                      <Link to={`/edit/${movie.id}`}>
+                        <MdEdit />
+                      </Link>
+                    ) : null}
+                  </div>
                 </div>
               </div>
             ))

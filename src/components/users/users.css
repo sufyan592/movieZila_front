@@ -1,0 +1,55 @@
+.user-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.8rem 1.5rem;
+    background-color: #224957;
+    margin: 0.7rem 0;
+}
+
+.user-per {
+    margin: 0 0.8rem;
+    color: #fff;
+}
+
+.user-content form {
+    display: flex;
+    align-items: center;
+}
+
+.user-content form label {
+    margin: 0 0.3rem;
+}
+
+.dashboard {
+    overflow-x: auto;
+    text-align: center;
+}
+
+.UserList h2 {
+    align-items: center;
+}
+
+.table {
+    width: 85%;
+    margin: auto;
+    border-collapse: collapse;
+    /* margin-top: 10px; */
+    background-color: #224957;
+    color: #fff;
+    margin-top: 4rem;
+
+}
+
+.th,
+.td {
+    padding: 10px;
+    border: 1px solid #2c687f;
+    text-align: center;
+}
+
+.center {
+    text-align: center;
+}
+
+/* Add more styles as needed */

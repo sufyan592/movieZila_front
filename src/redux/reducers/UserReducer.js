@@ -12,6 +12,13 @@ const userReducer = (state = initialState, action) => {
         isLoading: true,
         error: null,
       };
+    case "GET_ALL_USERS":
+      return {
+        ...state,
+        users: action.payload,
+        isLoading: true,
+        error: null,
+      };
     case "ADD_USER":
       return {
         ...state,

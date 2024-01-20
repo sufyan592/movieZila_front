@@ -29,3 +29,13 @@
     background-color: var(--primary-clr) !important;
     border-radius: 4px;
 }
+
+.pagination-active {
+    background-color: var(--primary-clr) !important;
+    border-radius: 4px;
+    padding: 0.4rem 1rem;
+}
+
+.pagination-number {
+    cursor: pointer;
+}

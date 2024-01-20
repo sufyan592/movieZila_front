@@ -9,7 +9,7 @@ import { useNavigate } from "react-router-dom";
 
 const NewMovieComp = () => {
   const navigate = useNavigate();
-  const loginUser = JSON.parse(localStorage.getItem("loginUser"));
+  const token = JSON.parse(localStorage.getItem("loginUser"));
 
   const [userValue, setUserValue] = useState({
     img: "",
@@ -43,7 +43,6 @@ const NewMovieComp = () => {
       const formData = new FormData();
       formData.append("file", uploadedImage);
 
-      // Append other form data
       Object.entries(userValue).forEach(([key, value]) => {
         formData.append(key, value);
       });
@@ -54,12 +53,11 @@ const NewMovieComp = () => {
         {
           headers: {
             "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${loginUser.token}`,
+            Authorization: `Bearer ${token.data}`,
           },
         }
       );
-
-      console.log("Image upload response:", response.data);
+      console.log(response);
 
       setUserValue({
         title: "",
@@ -68,10 +66,7 @@ const NewMovieComp = () => {
       });
       setUploadedImage(null);
 
-      // Display success message using toastify
       toast.success("New movie added successfully!");
-
-      // Redirect to the movies page
       navigate("/movies");
     } catch (error) {
       console.error("Error uploading image:", error.message);
@@ -86,6 +81,9 @@ const NewMovieComp = () => {
       img: "",
     });
     setUploadedImage(null);
+
+    toast.info("Movie creation cancelled.");
+    navigate("/movies");
   };
 
   return (

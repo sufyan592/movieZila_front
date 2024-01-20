@@ -5,19 +5,16 @@ import "./nav.css";
 
 const Nav = () => {
   const [showNavbar, setShowNavbar] = useState(false);
-  const loginUser = JSON.parse(localStorage.getItem("loginUser")) || "";
-  const history = useNavigate();
+  const loginUser = JSON.parse(localStorage.getItem("loginUser")) || null;
+  const navigate = useNavigate();
 
   const handleShowNavbar = () => {
     setShowNavbar(!showNavbar);
   };
 
   const handleLogout = () => {
-    // Clear token from local storage
     localStorage.removeItem("loginUser");
-
-    // Redirect to the login page or any other desired page
-    history("/signin");
+    navigate("/signin");
   };
 
   return (
