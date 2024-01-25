@@ -1,42 +1,66 @@
 const initialState = {
   users: [],
+  user: {},
   isLoading: false,
   error: null,
+  islogin: false,
 };
 
 const userReducer = (state = initialState, action) => {
   switch (action.type) {
-    case "REQUEST_USERS":
+    case "SIGNUP_USER_REQUEST":
+    case "LOGIN_USER_REQUEST":
+    case "ALL_USERS_REQUEST":
       return {
         ...state,
         isLoading: true,
         error: null,
+        islogin: false,
       };
-    case "GET_ALL_USERS":
+    case "ALL_USERS_SUCCESS":
       return {
         ...state,
         users: action.payload,
         isLoading: true,
         error: null,
       };
-    case "ADD_USER":
+    case "SIGNUP_USER_SUCCESS":
+    case "LOGIN_USER_SUCCESS":
       return {
         ...state,
-        users: [...state.users, action.payload],
+        user: action.payload,
         isLoading: false,
+        islogin: true,
       };
-    case "LOGIN_USER":
+
+    case "SIGNUP_USER_FAILURE":
+    case "LOGIN_USER_FAILURE":
+    case "ALL_USERS_FAILURE":
       return {
         ...state,
-        // You might want to store user login state or token in the state
-        // For example: loggedInUser: action.payload
         isLoading: false,
+        islogin: false,
+        users: null,
+        user: null,
+        error: action.payload,
       };
-    case "USERS_FAILURE_ERROR":
+    case "LOGOUT_SUCCESS":
       return {
         ...state,
         isLoading: false,
-        error: "An error occurred while processing the request.",
+        error: null,
+        islogin: false,
+        users: null,
+        loginUser: null,
+      };
+    case "LOGOUT_FAIL":
+      return {
+        ...state,
+        isLoading: false,
+        error: action.payload,
+        islogin: false,
+        users: null,
+        loginUser: null,
       };
     default:
       return state;

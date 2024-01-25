@@ -4,35 +4,30 @@ import { toast } from "react-toastify";
 
 // ================================ Sign up ============================
 
-export const addUser = (data) => {
-  // const navigate = useNavigate();
+export const addUser = (data, navigate) => {
   return async (dispatch) => {
-    dispatch({ type: "REQUEST_USERS" });
+    dispatch({ type: "SIGNUP_USER_REQUEST" });
     try {
       const response = await axios.post(
-        "http://localhost:8002/api/v1/user/signup",
+        `${process.env.REACT_APP_BASE_URL}/user/signup`,
         data
       );
-      if (response.status === 409) {
-        toast.error("Email already Exists.");
-      } else if (response.status != 201) {
-        toast.error(response.message);
-      }
+      console.log("Response:", response);
+
       dispatch({
-        type: "ADD_USER",
-        payload: data,
+        type: "SIGNUP_USER_SUCCESS",
+        payload: response.data,
       });
-      toast.success("Signup successful!");
-      // navigate("/signin");
+
+      // if (response.data.success) {
+      //   toast.success("Signup successful!");
+      //   navigate("/signin");
+      // }
     } catch (error) {
-      dispatch({ type: "USERS_FAILURE_ERROR" });
-      if (error.response.status === 409) {
-        toast.error("Email already Exists.");
-      } else if (error.response.status === 400) {
-        toast.error("Please Enter all Details.");
-      } else {
-        toast.error("An error occurred during Signup. Please try again.");
-      }
+      dispatch({
+        type: "SIGNUP_USER_FAILURE",
+        payload: error.response,
+      });
     }
   };
 };
@@ -41,32 +36,22 @@ export const addUser = (data) => {
 
 export const userLogin = (data) => {
   return async (dispatch) => {
-    dispatch({ type: "REQUEST_USERS" });
+    dispatch({ type: "LOGIN_USER_REQUEST" });
     try {
       const res = await axios.post(
-        "http://localhost:8002/api/v1/user/login",
+        `${process.env.REACT_APP_BASE_URL}/user/login`,
         data
       );
 
       console.log("login User:", res.data);
       localStorage.setItem("loginUser", JSON.stringify(res.data));
       dispatch({
-        type: "LOGIN_USER",
-        payload: data,
+        type: "LOGIN_USER_SUCCESS",
+        payload: res.data,
       });
-
-      // Display success message when user is found
-      toast.success("Login successful!");
     } catch (error) {
       console.log(error);
-      dispatch({ type: "USERS_FAILURE_ERROR" });
-
-      // Check if the error is due to the user not being found
-      if (error.response && error.response.status === 404) {
-        toast.error("User not found. Please check your credentials.");
-      } else {
-        toast.error("An error occurred during login. Please try again.");
-      }
+      dispatch({ type: "LOGIN_USER_FAILURE", payload: error.response });
     }
   };
 };
@@ -87,7 +72,7 @@ export const loginUserData = (id, token) => {
   return async (dispatch) => {
     dispatch({ type: "BLOG_DATA_REQUEST" });
     try {
-      const response = await fetch(`http://localhost:8001/api/v1/user/${id}`, {
+      const response = await fetch(`http://localhost:8001/user/${id}`, {
         method: "GET",
         headers: {
           "Content-type": "application/json",
@@ -122,10 +107,10 @@ export const loginUserData = (id, token) => {
 
 export const allUsers = () => {
   return async (dispatch) => {
-    dispatch({ type: "REQUEST_USERS" });
+    dispatch({ type: "ALL_USERS_REQUEST" });
 
     try {
-      const users = await axios.get("http://localhost:8002/api/v1/user");
+      const users = await axios.get(`${process.env.REACT_APP_BASE_URL}/user`);
 
       console.log("All Users Data:", users.data.users);
 
@@ -134,12 +119,21 @@ export const allUsers = () => {
       // const users = await response.json();
       // console.log("ALL users from DB:", data.data);
       dispatch({
-        type: "GET_ALL_USERS",
+        type: "ALL_USERS_SUCCESS",
         payload: users.data.users,
       });
     } catch (error) {
       console.log(error);
-      dispatch({ type: "USERS_FAILURE_ERROR" });
+      dispatch({ type: "ALL_USERS_FAILURE" });
     }
   };
+};
+// ================================ Get All Users from DataBase ============================
+
+export const logout = () => async (dispatch) => {
+  try {
+    dispatch({ type: "LOGOUT_SUCCESS" });
+  } catch (error) {
+    dispatch({ type: "LOGOUT_FAIL", payload: error.response.data.message });
+  }
 };

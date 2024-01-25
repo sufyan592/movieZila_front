@@ -1,7 +1,8 @@
-import React, { useState } from "react";
-import "../signup/signup.css";
-import { useDispatch } from "react-redux";
+import React, { useState, useEffect } from "react";
+import "../auth.css";
+import { useDispatch, useSelector } from "react-redux";
 import { userLogin } from "../../../redux/actions/UserAction";
+import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
 
@@ -12,6 +13,7 @@ const SigninComp = () => {
     email: "",
     password: "",
   });
+  const { error, user, islogin } = useSelector((user) => user.userReducer);
 
   const userData = (e) => {
     const { name, value } = e.target;
@@ -23,22 +25,24 @@ const SigninComp = () => {
 
   const submitUserData = (e) => {
     e.preventDefault();
-
     dispatch(
       userLogin({
         email: userValue.email,
         password: userValue.password,
       })
     );
-    navigate("/movies");
-
-    // The success message is already handled in the userLogin action
-
-    // setUserValue({
-    //   email: "",
-    //   password: "",
-    // });
   };
+
+  useEffect(() => {
+    if (error) {
+      toast.error(error.data.message);
+    } else if (user?.status === "Success") {
+      toast.success(user.message);
+      if (islogin == true) {
+        navigate("/movies");
+      }
+    }
+  }, [error, user, navigate]);
 
   return (
     <>
@@ -72,6 +76,7 @@ const SigninComp = () => {
           </div>
         </div>
       </section>
+      <ToastContainer />
     </>
   );
 };

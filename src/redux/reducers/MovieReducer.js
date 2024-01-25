@@ -1,13 +1,13 @@
-// movieReducer.js
-
 const initialState = {
   movies: {
     data: [],
     count: 0,
   },
+  movie: {},
+  // faviroteMovie: {},
   favoriteMovies: [],
   allFavirouteMovies: [],
-  currentPage: 1,
+  currentPage: 8,
   isLoading: false,
   error: null,
 };
@@ -16,10 +16,11 @@ const movieReducer = (state = initialState, action) => {
   switch (action.type) {
     case "NEW_MOVIE_REQUEST":
     case "MOVIE_DATA_REQUEST":
-    case "EDIT_MOVIE_DATA_REQUEST":
+    case "EDIT_MOVIE_REQUEST":
+    case "USER_MOVIE_FAVIROUTE_REQUEST":
       return {
         ...state,
-        isLoading: true,
+        isLoading: false,
         error: null,
       };
 
@@ -31,11 +32,12 @@ const movieReducer = (state = initialState, action) => {
       };
 
     case "MOVIE_DATA_SUCCESS":
+      // console.log(action.payload,'reducer')
       return {
         ...state,
         movies: {
-          data: action.payload.data,
-          count: action.payload.count,
+          data: action.payload?.data,
+          count: action.payload?.count,
         },
         isLoading: false,
         currentPage: action.payload.currentPage,
@@ -47,12 +49,27 @@ const movieReducer = (state = initialState, action) => {
         isLoading: false,
       };
 
-    case "EDIT_MOVIE_DATA_SUCCESS":
+    case "USER_MOVIE_FAVIROUTE_SUCCESS":
       return {
         ...state,
-        movies: state.movies.map((movie) =>
-          movie.id === action.payload.id ? action.payload : movie
-        ),
+        faviroteMovies: action.payload,
+        isLoading: false,
+        error: null,
+      };
+    case "SINGLE_MOVIE_SUCCESS":
+      return {
+        ...state,
+        movie: action.payload,
+        isLoading: false,
+        error: null,
+      };
+    case "EDIT_MOVIE_SUCCESS":
+      return {
+        ...state,
+        // movies: state?.movies?.data?.map((movie) =>
+        //   movie.id === action.payload.id ? action.payload : movie
+        // ),
+        movies: action.payload,
         isLoading: false,
       };
 

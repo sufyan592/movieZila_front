@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import axios from "axios";
 import "react-toastify/dist/ReactToastify.css";
-import "./users.css"; // Make sure to import your CSS file
+import "./users.css";
 
 const UserComp = () => {
   const [permissions, setPermissions] = useState([]);
@@ -48,18 +48,18 @@ const UserComp = () => {
     });
   };
 
-  const handlePermissionChange = async (userId, perId, e) => {
+  const handlePermissionChange = async (userId, permissionId, e) => {
     try {
       const response = await axios.patch(
         `http://localhost:8002/api/v1/user/permissions`,
-        { userId, perId }
+        { userId, permissionId }
       );
 
       if (response.status === 200) {
         notify(response.data.message, "success");
 
         const existingUserPermissionIndex = userPermissions.findIndex(
-          (uP) => uP.userId === userId && uP.perId === perId
+          (uP) => uP.userId === userId && uP.permissionId === permissionId
         );
 
         if (existingUserPermissionIndex !== -1) {
@@ -67,7 +67,7 @@ const UserComp = () => {
           updatedUserPermissions.splice(existingUserPermissionIndex, 1);
           setUserPermissions(updatedUserPermissions);
         } else {
-          const newUserPermission = { userId, perId };
+          const newUserPermission = { userId, permissionId };
           setUserPermissions([...userPermissions, newUserPermission]);
         }
       } else {
@@ -118,7 +118,7 @@ const UserComp = () => {
                           userPermissions.some(
                             (uP) =>
                               uP.userId === user.id &&
-                              uP.perId === permission.id
+                              uP.permissionId === permission.id
                           )
                         }
                         onChange={(e) =>

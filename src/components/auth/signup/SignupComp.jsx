@@ -1,14 +1,16 @@
-import React, { useState } from "react";
-import "./signup.css";
-import { useDispatch } from "react-redux";
+import React, { useState, useEffect } from "react";
+// import "./signup.css";
+import { useDispatch, useSelector } from "react-redux";
 import { addUser } from "../../../redux/actions/UserAction";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
+import "../auth.css";
 
 const SignupComp = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { error, users } = useSelector((user) => user.userReducer);
   const [userValue, setUserValue] = useState({
     name: "",
     email: "",
@@ -27,20 +29,25 @@ const SignupComp = () => {
     e.preventDefault();
 
     dispatch(
-      addUser({
-        name: userValue.name,
-        email: userValue.email,
-        password: userValue.password,
-      })
+      addUser(
+        {
+          name: userValue.name,
+          email: userValue.email,
+          password: userValue.password,
+        },
+        navigate
+      )
     );
-
-    // setUserValue({
-    //   name: "",
-    //   email: "",
-    //   password: "",
-    // });
-    // navigate("/signin");
   };
+
+  useEffect(() => {
+    if (error) {
+      toast.error(error.data.message);
+    } else if (users.status === "Success") {
+      toast.success(users.message);
+      navigate("/signin");
+    }
+  }, [error, users]);
 
   return (
     <>

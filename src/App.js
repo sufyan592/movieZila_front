@@ -1,20 +1,18 @@
 import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Signup from "./pages/Signup";
-import Signin from "./pages/Signin";
-import MovieNotFound from "./pages/MovieNotFound";
-import Movies from "./pages/Movies";
-import NewMovie from "./pages/NewMovie";
-import EditMovie from "./pages/EditMovie";
-import "./responsive.css";
-import FavMovies from "./pages/FavMovies";
-import { MoviePrivateRoute } from "./components/privateRoute/MoviePrivateRoute";
-import Users from "./pages/Users";
-import { AdminPrivateRoute } from "./components/privateRoute/AdminPrivateRoute";
+import Signup from "./pages/auth/Signup";
+import Signin from "./pages/auth/Signin";
+import Movies from "./pages/movies/Movies";
+import NewMovie from "./pages/movies/NewMovie";
+import EditMovie from "./pages/movies/EditMovie";
+import FavouriteMovie from "./pages/movies/FavouriteMovies";
+import { MoviePrivateRoute } from "./routes/private-routes/MoviePrivateRoute";
+import Users from "./pages/users/Users";
+import { AdminPrivateRoute } from "./routes/private-routes/AdminPrivateRoute";
 import {
   PrivateRoute,
   UserPermissionPrivateRoute,
-} from "./components/privateRoute/PrivateRoute";
+} from "./routes/private-routes/PrivateRoute";
 
 function App() {
   return (
@@ -24,17 +22,18 @@ function App() {
           <Route path="/" element={<Signup />}></Route>
           <Route path="/signin" element={<Signin />}></Route>
           <Route path="/signup" element={<Signup />}></Route>
-          <Route path="/nomovie" element={<MovieNotFound />}></Route>
           <Route path="/movies" element={<Movies />}></Route>
 
           <Route element={<MoviePrivateRoute />}>
             <Route path="/addmovie" element={<NewMovie />}></Route>
             {/* <Route path="/edit/:movieId" element={<EditMovie />}></Route> */}
-            <Route path="/favMovies" element={<FavMovies />}></Route>
+            <Route
+              path="/favourite-movies"
+              element={<FavouriteMovie />}
+            ></Route>
           </Route>
           <Route element={<PrivateRoute edit={"edit"} />}>
             <Route path="/edit/:movieId" element={<EditMovie />}></Route>
-            <Route path="/addmovie" element={<EditMovie />}></Route>
           </Route>
           <Route element={<PrivateRoute delete={"delete"} />}>
             <Route path="/delete" element={<EditMovie />}></Route>

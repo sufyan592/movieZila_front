@@ -4,19 +4,27 @@ const loginUser = JSON.parse(localStorage.getItem("loginUser")) || null;
 
 // =================================== New Movie ================================
 
-export const addMovie = (data) => {
+export const addMovie = (data, token) => {
   return async (dispatch) => {
     dispatch({ type: "NEW_MOVIE_REQUEST" });
 
     try {
-      await axios.post("http://localhost:8002/api/v1/movie", data);
+      const movie = await axios.post(
+        `${process.env.REACT_APP_BASE_URL}/movie`,
+        data,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       dispatch({
         type: "NEW_MOVIE_SUCCESS",
-        payload: data,
+        payload: movie,
       });
     } catch (error) {
-      console.error("Error creating blog data:", error.message);
       dispatch({
         type: "NEW_MOVIE_FAILURE",
         payload: error.message,
@@ -32,15 +40,16 @@ export const allMovies = (page = 1, pageSize = 8) => {
     dispatch({ type: "MOVIE_DATA_REQUEST" });
     try {
       const response = await axios.get(
-        `http://localhost:8002/api/v1/movie?page=${page}&pageSize=${pageSize}`
+        `${process.env.REACT_APP_BASE_URL}/movie?page=${page}&pageSize=${pageSize}`
       );
+      console.log("All Res:", response);
 
       dispatch({
         type: "MOVIE_DATA_SUCCESS",
         payload: {
-          data: response.data.data,
-          count: response.data.count,
-          currentPage: page, // Ensure currentPage is included
+          data: response?.data?.data,
+          count: response?.data?.count,
+          currentPage: page,
         },
       });
     } catch (error) {
@@ -60,7 +69,7 @@ export const allFavirouteMovies = (page = 1, pageSize = 8, userId, token) => {
     dispatch({ type: "FAVIROUTE_MOVIE_DATA_REQUEST" });
     try {
       const response = await axios.get(
-        `http://localhost:8002/api/v1/movie/favMovies/${userId}?page=${page}&pageSize=${pageSize}`,
+        `${process.env.REACT_APP_BASE_URL}/movie/favMovies/${userId}?page=${page}&pageSize=${pageSize}`,
         {
           headers: {
             "Content-Type": "application/json",
@@ -72,8 +81,8 @@ export const allFavirouteMovies = (page = 1, pageSize = 8, userId, token) => {
       dispatch({
         type: "FAVIROUTE_MOVIE_DATA_SUCCESS",
         payload: {
-          data: response.data.data,
-          count: response.data.count,
+          data: response?.data?.data,
+          count: response?.data?.count,
           currentPage: page,
         },
       });
@@ -87,15 +96,44 @@ export const allFavirouteMovies = (page = 1, pageSize = 8, userId, token) => {
   };
 };
 
-// =================================== Edit Movie ================================
+// =================================== User Favirote Movie ================================
 
-export const editMovie = (id, data, token) => {
+export const userFaviroteMovies = (userId, token) => {
   return async (dispatch) => {
-    dispatch({ type: "EDIT_MOVIE_DATA_REQUEST" });
+    dispatch({ type: "USER_MOVIE_FAVIROUTE_REQUEST" });
 
     try {
-      const response = await axios.patch(
-        `http://localhost:8001/api/v1/blog/${id}`,
+      const response = await axios.get(
+        `http://localhost:8002/movie/favMovies/${userId}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token.data}`,
+          },
+        }
+      );
+
+      dispatch({
+        type: "USER_MOVIE_FAVIROUTE_SUCCESS",
+        payload: response?.data?.data,
+      });
+    } catch (error) {
+      dispatch({
+        type: "USER_MOVIE_FAVIROUTE_FAILURE",
+        payload: error.message,
+      });
+    }
+  };
+};
+// =================================== Single Movie ================================
+
+export const singleMovie = (movieId, data, token) => {
+  return async (dispatch) => {
+    dispatch({ type: "SINGLE_MOVIE_REQUEST" });
+
+    try {
+      const response = await axios.get(
+        `http://localhost:8002/movie/${movieId}`,
         data,
         {
           headers: {
@@ -106,11 +144,40 @@ export const editMovie = (id, data, token) => {
       );
 
       dispatch({
-        type: "EDIT_MOVIE_DATA",
-        payload: response.data,
+        type: "SINGLE_MOVIE_SUCCESS",
+        payload: response?.data?.data,
       });
     } catch (error) {
-      console.error("Error updating blog data:", error.message);
+      dispatch({
+        type: "SINGLE_MOVIE_FAILURE",
+        payload: error.message,
+      });
+    }
+  };
+};
+// =================================== Edit Movie ================================
+
+export const editMovie = (movieId, data, token) => {
+  return async (dispatch) => {
+    dispatch({ type: "EDIT_MOVIE_REQUEST" });
+
+    try {
+      const response = await axios.put(
+        `http://localhost:8002/movie/${movieId}`,
+        data,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      dispatch({
+        type: "EDIT_MOVIE_SUCCESS",
+        payload: response?.data,
+      });
+    } catch (error) {
       dispatch({
         type: "EDIT_MOVIE_FAILURE",
         payload: error.message,
@@ -126,7 +193,7 @@ export const toggleFavorite = (userId, movieId, token) => {
       dispatch({ type: "TOGGLE_FAVORITE_REQUEST" });
 
       const response = await axios.patch(
-        `http://localhost:8002/api/v1/movie/add-to-favorites`,
+        `${process.env.REACT_APP_BASE_URL}/movie/add-to-favorites`,
         {
           userId,
           movieId,
@@ -141,7 +208,7 @@ export const toggleFavorite = (userId, movieId, token) => {
 
       dispatch({
         type: "TOGGLE_FAVORITE_SUCCESS",
-        payload: response.data,
+        payload: response?.data,
       });
     } catch (error) {
       console.error("Error toggling favorite:", error.message);
