@@ -3,42 +3,27 @@ import { toast } from "react-toastify";
 import axios from "axios";
 import "react-toastify/dist/ReactToastify.css";
 import "./users.css";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  allUsers,
+  usersPermissions,
+  permissions,
+  allPermissions,
+  changePermission,
+} from "../../redux/actions/UserAction";
 
 const UserComp = () => {
-  const [permissions, setPermissions] = useState([]);
-  const [userPermissions, setUserPermissions] = useState([]);
-  const [backUsers, setBackUsers] = useState([]);
-
   const loginUser = JSON.parse(localStorage.getItem("loginUser"));
+  const dispatch = useDispatch();
+
+  const { users, permissions, userPermissions, isLoading, error } = useSelector(
+    (user) => user.userReducer
+  );
 
   useEffect(() => {
-    async function getData() {
-      try {
-        const usersResponse = await axios.get(
-          `http://localhost:8002/api/v1/user`,
-          {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${loginUser.data}`,
-            },
-          }
-        );
-        const permissionsResponse = await axios.get(
-          `http://localhost:8002/api/v1/user/permissions`
-        );
-        const userPermissionsResponse = await axios.get(
-          `http://localhost:8002/api/v1/user/allUserpermissions`
-        );
-
-        setBackUsers(usersResponse.data.data);
-        setPermissions(permissionsResponse.data.data);
-        setUserPermissions(userPermissionsResponse.data.data);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    }
-
-    getData();
+    dispatch(allUsers(loginUser.data));
+    dispatch(allPermissions());
+    dispatch(usersPermissions());
   }, []);
 
   const notify = (text, type) => {
@@ -48,34 +33,40 @@ const UserComp = () => {
     });
   };
 
-  const handlePermissionChange = async (userId, permissionId, e) => {
-    try {
-      const response = await axios.patch(
-        `http://localhost:8002/api/v1/user/permissions`,
-        { userId, permissionId }
-      );
+  // const handlePermissionChange = async (userId, permissionId, e) => {
+  //   try {
+  //     dispatch(updatePermissions(userId,permissionId))
+  //     // const response = await axios.patch(
+  //     //   `http://localhost:8002/api/v1/user/permissions`,
+  //     //   { userId, permissionId }
+  //     // );
 
-      if (response.status === 200) {
-        notify(response.data.message, "success");
+  //     if (response.status === 200) {
+  //       notify(response.data.message, "success");
 
-        const existingUserPermissionIndex = userPermissions.findIndex(
-          (uP) => uP.userId === userId && uP.permissionId === permissionId
-        );
+  //       const existingUserPermissionIndex = userPermissions.findIndex(
+  //         (uP) => uP.userId === userId && uP.permissionId === permissionId
+  //       );
 
-        if (existingUserPermissionIndex !== -1) {
-          const updatedUserPermissions = [...userPermissions];
-          updatedUserPermissions.splice(existingUserPermissionIndex, 1);
-          setUserPermissions(updatedUserPermissions);
-        } else {
-          const newUserPermission = { userId, permissionId };
-          setUserPermissions([...userPermissions, newUserPermission]);
-        }
-      } else {
-        notify(response.data.message, "error");
-      }
-    } catch (error) {
-      console.error("Error handling permission change:", error);
-    }
+  //       if (existingUserPermissionIndex !== -1) {
+  //         const updatedUserPermissions = [...userPermissions];
+  //         updatedUserPermissions.splice(existingUserPermissionIndex, 1);
+  //         setUserPermissions(updatedUserPermissions);
+  //       } else {
+  //         const newUserPermission = { userId, permissionId };
+  //         setUserPermissions([...userPermissions, newUserPermission]);
+  //       }
+  //     } else {
+  //       notify(response.data.message, "error");
+  //     }
+  //   } catch (error) {
+  //     console.error("Error handling permission change:", error);
+  //   }
+  // };
+  const handlePermissionChange = (userId, permissionId, e) => {
+    dispatch(
+      changePermission(userId, permissionId, userPermissions, loginUser.data)
+    );
   };
 
   return (
@@ -92,7 +83,7 @@ const UserComp = () => {
             </tr>
             <tr>
               <th className="th center"></th>
-              {permissions.map((permission) => (
+              {permissions?.map((permission) => (
                 <th key={permission.id} className="th center">
                   {permission.name}
                 </th>
@@ -100,14 +91,14 @@ const UserComp = () => {
             </tr>
           </thead>
           <tbody>
-            {backUsers.map((user) => (
+            {users?.map((user) => (
               <tr key={user.id}>
                 <td className="td">
                   <div style={{ cursor: "pointer" }} className="center">
                     {user.email}
                   </div>
                 </td>
-                {permissions.map((permission) => (
+                {permissions?.map((permission) => (
                   <td key={permission.id} className="td center">
                     <div>
                       <input

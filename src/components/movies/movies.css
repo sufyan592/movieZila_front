@@ -1,3 +1,12 @@
+.fav-cart-clr {
+    color: #3498db;
+}
+
+.fav-cart-clr-chnge {
+    color: #34db3c;
+}
+
+
 .movies-list-wrapper {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -54,8 +63,9 @@
 }
 
 .movie-card-inner-content {
-    display: flex;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: 70% 15% 15%;
+    justify-content: end;
     align-items: center;
 }
 
@@ -72,6 +82,7 @@
     color: #fff;
     border: none;
     font-weight: 500;
+    cursor: pointer;
 }
 
 .pagination .active {
@@ -165,6 +176,23 @@
     padding: 10rem 0;
 }
 
-/* .movie-not-found {
-    min-height: 100vh;
-} */
+.ant-modal .ant-modal-content {
+    background-color: var(--primary-clr);
+}
+
+.ant-modal .ant-modal-header {
+    background-color: transparent;
+}
+
+.ant-btn-primary {
+    background: var(--inputs-clr);
+}
+
+.ant-btn-default {
+    background: var(--inputs-clr);
+    color: #fff;
+}
+
+.ant-modal .ant-modal-body p {
+    color: #000;
+}

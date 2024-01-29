@@ -13,6 +13,7 @@ import {
   PrivateRoute,
   UserPermissionPrivateRoute,
 } from "./routes/private-routes/PrivateRoute";
+import UserCompCopy from "./components/users/UserCompCopy";
 
 function App() {
   return (
@@ -41,9 +42,9 @@ function App() {
           <Route element={<PrivateRoute create={"create"} />}>
             <Route path="/addmovie" element={<EditMovie />}></Route>
           </Route>
-
-          <Route path="/users" element={<Users />}></Route>
-          <Route element={<AdminPrivateRoute />}></Route>
+          <Route element={<AdminPrivateRoute />}>
+            <Route path="/users" element={<Users />}></Route>
+          </Route>
         </Routes>
       </BrowserRouter>
     </>

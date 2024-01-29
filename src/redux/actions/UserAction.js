@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
 
 // ================================ Sign up ============================
 
@@ -105,22 +105,23 @@ export const loginUserData = (id, token) => {
 
 // ================================ Get All Users from DataBase ============================
 
-export const allUsers = () => {
+export const allUsers = (token) => {
   return async (dispatch) => {
     dispatch({ type: "ALL_USERS_REQUEST" });
 
     try {
-      const users = await axios.get(`${process.env.REACT_APP_BASE_URL}/user`);
+      const users = await axios.get(`${process.env.REACT_APP_BASE_URL}/user`, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-      console.log("All Users Data:", users.data.users);
+      console.log("ALL USERS:", users?.data?.data);
 
-      // localStorage.setItem("allLoginUsers", JSON.stringify(users.data.users));
-
-      // const users = await response.json();
-      // console.log("ALL users from DB:", data.data);
       dispatch({
         type: "ALL_USERS_SUCCESS",
-        payload: users.data.users,
+        payload: users?.data?.data,
       });
     } catch (error) {
       console.log(error);
@@ -128,7 +129,141 @@ export const allUsers = () => {
     }
   };
 };
-// ================================ Get All Users from DataBase ============================
+// ================================ Get All Permissions ============================
+
+export const allPermissions = (token) => {
+  return async (dispatch) => {
+    dispatch({ type: "PERMISSIONS_REQUEST" });
+
+    try {
+      const users = await axios.get(
+        `${process.env.REACT_APP_BASE_URL}/user/permissions`
+      );
+      console.log("USERS PER::", users?.data?.data);
+
+      dispatch({
+        type: "PERMISSIONS_SUCCESS",
+        payload: users?.data?.data,
+      });
+    } catch (error) {
+      console.log(error);
+      dispatch({ type: "PERMISSIONS_FAILURE" });
+    }
+  };
+};
+
+// ================================ User Permissions ============================
+
+export const usersPermissions = (token) => {
+  return async (dispatch) => {
+    dispatch({ type: "UESRS_PERMISSIONS_REQUEST" });
+
+    try {
+      const users = await axios.get(
+        `${process.env.REACT_APP_BASE_URL}/user/allUserpermissions`
+      );
+      dispatch({
+        type: "USERS_PERMISSIONS_SUCCESS",
+        payload: users?.data?.data,
+      });
+    } catch (error) {
+      dispatch({ type: "USERS_PERMISSIONS_FAILURE" });
+    }
+  };
+};
+// // ================================ Update User Permissions ============================
+
+// export const updatePermissions = (
+//   userId,
+//   permissionId,
+//   userPermissions,
+//   token
+// ) => {
+//   return async (dispatch) => {
+//     dispatch({ type: "UPDATE_UESRS_PERMISSIONS_REQUEST" });
+
+//     try {
+//       const hasPermission = userPermissions.some(
+//         (uP) => uP.userId === userId && uP.permissionId === permissionId
+//       );
+//       const users = await axios.patch(
+//         `${process.env.REACT_APP_BASE_URL}/user/permissions`,
+//         { userId, permissionId }
+//       );
+//       dispatch({
+//         type: "UPDATE_USERS_PERMISSIONS_SUCCESS",
+//         payload: users?.data?.data,
+//       });
+//     } catch (error) {
+//       dispatch({ type: "UPDATE_USERS_PERMISSIONS_FAILURE" });
+//     }
+//   };
+// };
+
+// ================================ Update User Permissions ============================
+
+export const changePermission = (
+  userId,
+  permissionId,
+  userPermissions,
+  token
+) => {
+  return async (dispatch) => {
+    try {
+      dispatch({ type: "CHANGE_PERMISSIONS_REQUEST" });
+      const response = await axios.patch(
+        `${process.env.REACT_APP_BASE_URL}/user/permissions`,
+        { userId: userId, permissionId: permissionId },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (response.status === 200) {
+        toast.success(response.data.message);
+        const existingUserPermissionIndex = userPermissions.findIndex(
+          (uP) => uP.userId === userId && uP.permissionId === permissionId
+        );
+
+        if (existingUserPermissionIndex !== -1) {
+          const updatedUserPermissions = [...userPermissions];
+          updatedUserPermissions.splice(existingUserPermissionIndex, 1);
+          dispatch({
+            type: "CHANGE_PERMISSIONS_SUCCESS",
+            payload: updatedUserPermissions,
+          });
+        } else {
+          const newUserPermission = {
+            userId: userId,
+            permissionId: permissionId,
+          };
+          const updatedUserPermissions = [
+            ...userPermissions,
+            newUserPermission,
+          ];
+          dispatch({
+            type: "CHANGE_PERMISSIONS_SUCCESS",
+            payload: updatedUserPermissions,
+          });
+        }
+      } else {
+        toast.error(response.data.message);
+        dispatch({
+          type: "CHANGE_PERMISSIONS_FAILURE",
+          payload: { error: response.data.message },
+        });
+      }
+    } catch (error) {
+      console.log(error);
+      // showToast('Error handling permission change:', 'error');
+    }
+  };
+};
+
+// ================================ Logout User============================
 
 export const logout = () => async (dispatch) => {
   try {

@@ -1,86 +1,48 @@
-// import React, { useEffect, useState } from "react";
-// import { FiHeart } from "react-icons/fi";
-// import { CiCirclePlus } from "react-icons/ci";
-// import "../movies.css";
-// import { Link, useLocation, useNavigate } from "react-router-dom";
-// import { useDispatch, useSelector } from "react-redux";
-// import { jwtDecode } from "jwt-decode";
-// import { MdEdit } from "react-icons/md";
-// import {
-//   allMovies,
-//   toggleFavorite,
-//   userFaviroteMovies,
-// } from "../../../redux/actions/MovieAction";
-
-// const MovieListComp = () => {
-//   const dispatch = useDispatch();
-//   const { movies, isLoading, error, currentPage, faviroteMovies } = useSelector(
-//     (state) => state.movieReducer
-//   );
-//   console.log("M::", movies, "mo");
-//   useEffect(() => {
-//     dispatch(allMovies());
-//   }, []);
-//   if (movies?.data?.length)
-//     return (
-//       <>
-//         <section className="movie-list-hero">
-//           <div className="movie-list-wrapper-hero section-spacing">
-//             <div className="movie-list-title">
-//               <h2>All Movies</h2>
-//             </div>
-//             <div className="movie-list-add">
-//               <Link to="/addmovie">
-//                 <CiCirclePlus />
-//               </Link>
-//             </div>
-//           </div>
-//         </section>
-//         <section className="movies-list">
-//           <div className="movies-list-wrapper section-spacing">
-//             <div className="movie-card">
-//               <div className="movie-card-img">
-//                 <img src="" />
-//                 <div className="favorite-icon">
-//                   <FiHeart />
-//                 </div>
-//               </div>
-//               <div className="movie-card-content">
-//                 <h5>title</h5>
-//                 <div className="movie-card-inner-content">
-//                   <p>4353</p>
-//                   <Link to="#">
-//                     <MdEdit />
-//                   </Link>
-//                 </div>
-//               </div>
-//             </div>
-//           </div>
-//         </section>
-//       </>
-//     );
-// };
-
-// export default MovieListComp;
-
 import React, { useEffect, useState } from "react";
 import { FiHeart } from "react-icons/fi";
 import { CiCirclePlus } from "react-icons/ci";
+import { MdDelete, MdEdit } from "react-icons/md";
 import "../movies.css";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { jwtDecode } from "jwt-decode";
-import { MdEdit } from "react-icons/md";
+import { ToastContainer, toast } from "react-toastify";
+import { Button, Modal } from "antd";
+
 import {
   allMovies,
   toggleFavorite,
   userFaviroteMovies,
+  deleteSingleMovie,
 } from "../../../redux/actions/MovieAction";
+import ConfimationModal from "../../common/modal/ConfimationModal";
 
 const MovieListComp = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [movieToDelete, setMovieToDelete] = useState(null);
+
+  const showModal = (movieId) => {
+    setMovieToDelete(movieId);
+    setIsModalOpen(true);
+  };
+
+  const handleOk = () => {
+    if (movieToDelete) {
+      dispatch(deleteSingleMovie(movieToDelete, token.data));
+      toast.success("Movie Deleted Successfully.");
+    }
+
+    setIsModalOpen(false);
+    setMovieToDelete(null);
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
+    setMovieToDelete(null);
+  };
+
   const [favColors, setFavColors] = useState({});
   const { pathname } = useLocation();
-  // console.log(navigate);
   const token = JSON.parse(localStorage.getItem("loginUser")) || null;
   const { userId, userPermissions } = token
     ? jwtDecode(token.data)
@@ -91,10 +53,6 @@ const MovieListComp = () => {
   const { movies, isLoading, error, currentPage, faviroteMovies } = useSelector(
     (state) => state.movieReducer
   );
-
-  console.log("User DATA:::", movies);
-
-  const [moviesData, setMoviesData] = useState([]);
 
   useEffect(() => {
     if (token) {
@@ -114,16 +72,13 @@ const MovieListComp = () => {
 
   useEffect(() => {
     dispatch(allMovies());
-  }, [pathname]);
+  }, [dispatch, movies]);
 
-  useEffect(() => {
-    const allMovies = movies?.data;
-    setMoviesData(allMovies);
-  }, [moviesData]);
+  const deleteMovie = (movieId, token) => {
+    showModal(movieId);
+  };
 
-  console.log("MOFS::", moviesData);
-
-  const totalPages = Math.ceil(movies?.data?.data?.length / itemsPerPage);
+  const totalPages = Math.ceil(movies?.data?.length / itemsPerPage);
 
   const handlePageChange = (page) => {
     dispatch(allMovies(page));
@@ -177,15 +132,11 @@ const MovieListComp = () => {
           </div>
         </div>
       </section>
+
       <section className="movies-list">
         <div className="movies-list-wrapper section-spacing">
-          {isLoading ? (
-            <p>Loading...</p>
-          ) : error ? (
-            <p>Error: {error}</p>
-          ) : (
-            movies?.data?.data &&
-            movies?.data?.data
+          {movies?.data &&
+            movies?.data
               .slice(
                 (currentPage - 1) * itemsPerPage,
                 currentPage * itemsPerPage
@@ -194,15 +145,13 @@ const MovieListComp = () => {
                 <div key={movie.id} className="movie-card">
                   <div className="movie-card-img">
                     <img
-                      src={`http://localhost:8002/images/${movie.img}`}
+                      src={`${process.env.REACT_APP_IMAGE_URL}/images/${movie.img}`}
                       alt="movie"
                     />
                     {token ? (
-                      <div
-                        className="favorite-icon"
-                        onClick={() => handleFavoriteClick(movie.id)}
-                      >
+                      <div className="favorite-icon">
                         <FiHeart
+                          onClick={() => handleFavoriteClick(movie.id)}
                           color={
                             favColors[movie.id] === "pink" ? "white" : "#2BD17E"
                           }
@@ -231,11 +180,19 @@ const MovieListComp = () => {
                           <MdEdit />
                         </Link>
                       ) : null}
+                      {userPermissions.some(
+                        (permission) => permission === "delete"
+                      ) ? (
+                        <Link>
+                          <MdDelete
+                            onClick={() => deleteMovie(movie.id, token.data)}
+                          />
+                        </Link>
+                      ) : null}
                     </div>
                   </div>
                 </div>
-              ))
-          )}
+              ))}
         </div>
       </section>
 
@@ -256,6 +213,17 @@ const MovieListComp = () => {
           Next
         </button>
       </div>
+
+      <section className="openModal">
+        <Modal
+          title="Delete Confirmation?"
+          visible={isModalOpen}
+          onOk={handleOk}
+          onCancel={handleCancel}
+        >
+          <p>Do you want to delete movie?</p>
+        </Modal>
+      </section>
     </>
   );
 };

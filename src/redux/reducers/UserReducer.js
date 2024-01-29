@@ -2,6 +2,8 @@ const initialState = {
   users: [],
   user: {},
   isLoading: false,
+  permissions: [],
+  userPermissions: [],
   error: null,
   islogin: false,
 };
@@ -31,6 +33,34 @@ const userReducer = (state = initialState, action) => {
         user: action.payload,
         isLoading: false,
         islogin: true,
+      };
+    case "PERMISSIONS_SUCCESS":
+      return {
+        ...state,
+        permissions: action.payload,
+        isLoading: false,
+        error: null,
+      };
+    case "USERS_PERMISSIONS_SUCCESS":
+      return {
+        ...state,
+        userPermissions: action.payload,
+        isLoading: false,
+        error: null,
+      };
+    case "CHANGE_PERMISSIONS_SUCCESS":
+      return {
+        ...state,
+        userPermissions: action.payload,
+        isLoading: false,
+        error: null,
+      };
+    // case "UPDATE_USERS_PERMISSIONS_SUCCESS":
+      return {
+        ...state,
+        userPermissions: action.payload,
+        isLoading: false,
+        error: null,
       };
 
     case "SIGNUP_USER_FAILURE":

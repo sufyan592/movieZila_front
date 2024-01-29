@@ -40,7 +40,7 @@ export const allMovies = (page = 1, pageSize = 8) => {
     dispatch({ type: "MOVIE_DATA_REQUEST" });
     try {
       const response = await axios.get(
-        `${process.env.REACT_APP_BASE_URL}/movie?page=${page}&pageSize=${pageSize}`
+        `${process.env.REACT_APP_BASE_URL}/movie`
       );
       console.log("All Res:", response);
 
@@ -69,7 +69,7 @@ export const allFavirouteMovies = (page = 1, pageSize = 8, userId, token) => {
     dispatch({ type: "FAVIROUTE_MOVIE_DATA_REQUEST" });
     try {
       const response = await axios.get(
-        `${process.env.REACT_APP_BASE_URL}/movie/favMovies/${userId}?page=${page}&pageSize=${pageSize}`,
+        `${process.env.REACT_APP_BASE_URL}/movie/favMovies/${userId}`,
         {
           headers: {
             "Content-Type": "application/json",
@@ -77,6 +77,7 @@ export const allFavirouteMovies = (page = 1, pageSize = 8, userId, token) => {
           },
         }
       );
+      console.log("FAV DATA::::", response);
 
       dispatch({
         type: "FAVIROUTE_MOVIE_DATA_SUCCESS",
@@ -104,7 +105,7 @@ export const userFaviroteMovies = (userId, token) => {
 
     try {
       const response = await axios.get(
-        `http://localhost:8002/movie/favMovies/${userId}`,
+        `${process.env.REACT_APP_BASE_URL}/movie/favMovies/${userId}`,
         {
           headers: {
             "Content-Type": "application/json",
@@ -112,6 +113,8 @@ export const userFaviroteMovies = (userId, token) => {
           },
         }
       );
+
+      console.log("User Faviroute::::", response);
 
       dispatch({
         type: "USER_MOVIE_FAVIROUTE_SUCCESS",
@@ -133,7 +136,7 @@ export const singleMovie = (movieId, data, token) => {
 
     try {
       const response = await axios.get(
-        `http://localhost:8002/movie/${movieId}`,
+        `${process.env.REACT_APP_BASE_URL}/movie/${movieId}`,
         data,
         {
           headers: {
@@ -163,7 +166,7 @@ export const editMovie = (movieId, data, token) => {
 
     try {
       const response = await axios.put(
-        `http://localhost:8002/movie/${movieId}`,
+        `${process.env.REACT_APP_BASE_URL}/movie/${movieId}`,
         data,
         {
           headers: {
@@ -180,6 +183,38 @@ export const editMovie = (movieId, data, token) => {
     } catch (error) {
       dispatch({
         type: "EDIT_MOVIE_FAILURE",
+        payload: error.message,
+      });
+    }
+  };
+};
+// =================================== Delete Movie ================================
+
+export const deleteSingleMovie = (movieId, token) => {
+  return async (dispatch) => {
+    dispatch({ type: "DELETE_MOVIE_REQUEST" });
+
+    try {
+      const response = await axios.delete(
+        `${process.env.REACT_APP_BASE_URL}/movie/${movieId}`,
+
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      console.log("User Data::", response);
+
+      dispatch({
+        type: "DELETE_MOVIE_SUCCESS",
+        payload: movieId,
+      });
+    } catch (error) {
+      dispatch({
+        type: "DELETE_MOVIE_FAILURE",
         payload: error.message,
       });
     }

@@ -75,10 +75,7 @@ const FaviroteMoviesComp = () => {
 
           <section className="movies-list">
             <div className="movies-list-wrapper section-spacing">
-              {isLoading ? (
-                <p>Loading...</p>
-              ) : (
-                movies &&
+              {movies &&
                 movies.map((movie) => (
                   <div key={movie?.Movie?.movieId} className="movie-card">
                     <div className="movie-card-img">
@@ -101,8 +98,7 @@ const FaviroteMoviesComp = () => {
                       </div>
                     </div>
                   </div>
-                ))
-              )}
+                ))}
             </div>
           </section>
 

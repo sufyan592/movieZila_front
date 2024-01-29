@@ -1,10 +1,6 @@
 const initialState = {
-  movies: {
-    data: [],
-    count: 0,
-  },
+  movies: [],
   movie: {},
-  // faviroteMovie: {},
   favoriteMovies: [],
   allFavirouteMovies: [],
   currentPage: 8,
@@ -20,7 +16,7 @@ const movieReducer = (state = initialState, action) => {
     case "USER_MOVIE_FAVIROUTE_REQUEST":
       return {
         ...state,
-        isLoading: false,
+        isLoading: true,
         error: null,
       };
 
@@ -32,13 +28,10 @@ const movieReducer = (state = initialState, action) => {
       };
 
     case "MOVIE_DATA_SUCCESS":
-      // console.log(action.payload,'reducer')
+      console.log("ALL MOVIES DELETE::", state.movies);
       return {
         ...state,
-        movies: {
-          data: action.payload?.data,
-          count: action.payload?.count,
-        },
+        movies: action.payload?.data,
         isLoading: false,
         currentPage: action.payload.currentPage,
       };
@@ -64,18 +57,27 @@ const movieReducer = (state = initialState, action) => {
         error: null,
       };
     case "EDIT_MOVIE_SUCCESS":
+      const updatedMovie = action.payload;
+      const updatedMovies = state.movies.map((movie) =>
+        movie.id === updatedMovie.id ? updatedMovie : movie
+      );
+
       return {
         ...state,
-        // movies: state?.movies?.data?.map((movie) =>
-        //   movie.id === action.payload.id ? action.payload : movie
-        // ),
-        movies: action.payload,
+        movies: updatedMovies,
         isLoading: false,
       };
 
+    case "DELETE_MOVIE_SUCCESS":
+      return {
+        ...state,
+        movies: state?.movies?.filter((movie) => movie.id !== action.payload),
+        isLoading: false,
+      };
     case "NEW_MOVIE_FAILURE":
     case "MOVIE_DATA_FAILURE":
     case "EDIT_MOVIE_FAILURE":
+    case "DELETE_MOVIE_FAILURE":
       return {
         ...state,
         isLoading: false,
